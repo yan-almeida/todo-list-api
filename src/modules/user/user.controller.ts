@@ -12,7 +12,7 @@ import { PaginatedDto } from '../../common/dtos/paginated.dto';
 import { PaginationParser } from '../../common/parsers/pagination.parser';
 import { JwtGuardSetup } from '../../decorators/jwt-guard.decorator';
 import { ApiController } from '../../decorators/swagger/api-controller.decorator';
-import { PaginatedResponse } from '../../decorators/swagger/api-paginated-response.decorator';
+import { PaginatedOkResponse } from '../../decorators/swagger/api-paginated-response.decorator';
 import { BadRequestResponse } from '../../decorators/swagger/bad-request-response.decorator';
 import { CreatedResponse } from '../../decorators/swagger/created-response.decorator';
 import { NoContentResponse } from '../../decorators/swagger/no-content-response.decorator';
@@ -42,14 +42,11 @@ export class UserController {
   }
 
   @Get()
-  @PaginatedResponse(UserDto, { description: 'Paginação de Usuários' })
+  @PaginatedOkResponse(UserDto, { description: 'Paginação de Usuários' })
   @BadRequestResponse()
   async paginate(
     @Query() filter: FilterUserDto,
   ): Promise<PaginatedDto<UserDto>> {
-    filter.page ?? 1;
-    filter.limit ?? 10;
-
     const paginate = await this._userService.paginate(filter);
 
     return PaginationParser.toPagination(paginate, UserParser.toUserDto);
@@ -71,7 +68,7 @@ export class UserController {
   @Patch(':id')
   @OkResponse({
     type: UserDto,
-    description: 'Detalhes de Usuário',
+    description: 'Atualização de dados do Usuário',
   })
   @NoContentResponse()
   @NotFoundResponse()

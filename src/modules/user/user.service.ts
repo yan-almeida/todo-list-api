@@ -1,6 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { compare } from 'bcryptjs';
 import { paginate } from 'nestjs-typeorm-paginate';
 import { Repository } from 'typeorm';
 import { EntityNotFoundError } from '../../exceptions/entity-not-found-error.exception';
@@ -21,7 +20,7 @@ export class UserService {
 
     return this._userRepo.save(user);
   }
-  async paginate(filter: FilterUserDto) {
+  paginate(filter: FilterUserDto) {
     const queryBuilder = this._userRepo.createQueryBuilder('u');
 
     filter.createOrder(queryBuilder);
@@ -54,13 +53,6 @@ export class UserService {
     }
 
     return user;
-  }
-  async validateUserPassword(plainPass: string, hashedPass: string) {
-    const usuario = await compare(plainPass, hashedPass);
-
-    if (!usuario) {
-      throw new UnauthorizedException();
-    }
   }
 
   async update(id: string, dto: UpdateUserDto) {

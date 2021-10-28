@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\"",
     "start": "node dist/main",
     "start:dev": "nest start --watch",
     "start:debug": "env-cmd -f .env nest start --debug --watch",
@@ -36,6 +36,7 @@
     "bcryptjs": "^2.4.3",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
+    "date-fns": "^2.25.0",
     "dotenv": "^10.0.0",
     "env-cmd": "^10.1.0",
     "faker": "^5.5.3",

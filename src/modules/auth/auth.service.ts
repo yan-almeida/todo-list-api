@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { compare } from 'bcryptjs';
 import { JwtPayloadBuilder } from '../../common/builders/jwt-payload.builder';
 import { ITokenUser } from '../../common/interfaces/token-user.interface';
 import { User } from '../user/entities/user.entity';
@@ -15,7 +16,7 @@ export class AuthService {
   async validateUser(email: string, password: string): Promise<ITokenUser> {
     const user = await this._userService.findOneByEmail(email);
 
-    await this._userService.validateUserPassword(password, user.password);
+    await this.#validateUserPassword(password, user.password);
 
     const token = this.#generateToken(user);
 
@@ -23,6 +24,13 @@ export class AuthService {
       user,
       token,
     };
+  }
+  async #validateUserPassword(plainPass: string, hashedPass: string) {
+    const usuario = await compare(plainPass, hashedPass);
+
+    if (!usuario) {
+      throw new UnauthorizedException();
+    }
   }
   #generateToken(user: User) {
     const payload = JwtPayloadBuilder.toPayload(

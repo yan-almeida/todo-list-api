@@ -1,6 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { Allow, IsOptional } from 'class-validator';
+import { format, subWeeks } from 'date-fns';
 import { SelectQueryBuilder } from 'typeorm';
 import { ParseNumberTransform } from '../../transformers/parse-number.transform';
 import {
@@ -8,10 +9,12 @@ import {
   EntityFilterBuilder,
 } from '../builders/entity-filter.builder';
 
+const SUB_WEEK = 1;
 export abstract class PaginationDto {
   @ApiPropertyOptional({
     description: 'Pagina atual',
     example: 1,
+    default: 1,
   })
   @IsOptional()
   @Transform(ParseNumberTransform)
@@ -20,6 +23,7 @@ export abstract class PaginationDto {
   @ApiPropertyOptional({
     description: 'Limite de entidades por página',
     example: 10,
+    default: 10,
   })
   @IsOptional()
   @Transform(ParseNumberTransform)
@@ -36,14 +40,14 @@ export abstract class PaginationDto {
 
   @ApiPropertyOptional({
     description: 'Entidades a partir de uma data',
-    example: '06/07/2021',
+    example: format(subWeeks(new Date(), SUB_WEEK), 'dd/mm/yyyy'),
   })
   @IsOptional()
   startAt?: string;
 
   @ApiPropertyOptional({
     description: 'Entidades até de uma data',
-    example: '06/09/2021',
+    example: format(new Date(), 'dd/mm/yyyy'),
   })
   @IsOptional()
   endAt?: string;

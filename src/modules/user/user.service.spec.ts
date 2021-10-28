@@ -10,15 +10,7 @@ import { UserService } from './user.service';
 describe('UserService', () => {
   let userService: UserService;
 
-  const mockedRepo = {
-    save: jest.fn(),
-    create: jest.fn(),
-    find: jest.fn(),
-    findOne: jest.fn(),
-    update: jest.fn(),
-    delete: jest.fn(),
-    createQueryBuilder: TestMock.createQueryBuilderSetup(),
-  };
+  const mockedRepo = TestMock.mockedRepo();
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -31,7 +23,7 @@ describe('UserService', () => {
       ],
     }).compile();
 
-    userService = module.get<UserService>(UserService);
+    userService = module.get(UserService);
   });
 
   beforeEach(() => {
@@ -64,7 +56,7 @@ describe('UserService', () => {
   });
 
   describe('findOne', () => {
-    it('deve retornar um usuário existente', async () => {
+    it('deve retornar um usuário existente pelo id', async () => {
       const user = UserMock.validUser();
       mockedRepo.findOne.mockReturnValue(user);
 
@@ -74,10 +66,29 @@ describe('UserService', () => {
       expect(mockedRepo.findOne).toHaveBeenCalledTimes(1);
     });
 
-    it('deve retornar uma exceção ao não encontrar um usuário', async () => {
+    it('deve retornar um usuário existente pelo email', async () => {
+      const user = UserMock.validUser();
+      mockedRepo.findOne.mockReturnValue(user);
+
+      const searchedUser = await userService.findOneByEmail(user.email);
+
+      expect(searchedUser).toMatchObject(user);
+      expect(mockedRepo.findOne).toHaveBeenCalledTimes(1);
+    });
+
+    it('deve retornar uma exceção ao não encontrar um usuário pelo id', async () => {
       mockedRepo.findOne.mockReturnValue(null);
 
       expect(userService.findOne(uuid())).rejects.toBeInstanceOf(HttpException);
+      expect(mockedRepo.findOne).toHaveBeenCalledTimes(1);
+    });
+
+    it('deve retornar uma exceção ao não encontrar um usuário pelo email', async () => {
+      mockedRepo.findOne.mockReturnValue(null);
+
+      expect(
+        userService.findOneByEmail('email@email.com'),
+      ).rejects.toBeInstanceOf(HttpException);
       expect(mockedRepo.findOne).toHaveBeenCalledTimes(1);
     });
   });

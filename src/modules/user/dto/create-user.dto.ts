@@ -19,10 +19,10 @@ export class CreateUserDto {
   @ApiProperty({ example: Faker.name.findName() })
   @IsString({ message: 'Nome é inválido.' })
   @MaxLength(255, {
-    message: 'Tamanho máximo do nome deve ser menor que 255 caracteres.',
+    message: 'Tamanho máximo do nome. Deve ser menor que 255 caracteres.',
   })
   @MinLength(2, {
-    message: 'Tamanho mínimo do nome deve ser maior que 2 caracteres.',
+    message: 'Tamanho mínimo do nome. Deve ser maior que 2 caracteres.',
   })
   fullName: string;
 
@@ -30,10 +30,10 @@ export class CreateUserDto {
     example: Faker.internet.email(),
   })
   @MaxLength(255, {
-    message: 'Tamanho máximo do email deve ser menor que 255 caracteres.',
+    message: 'Tamanho máximo do email. Deve ser menor que 255 caracteres.',
   })
   @MinLength(2, {
-    message: 'Tamanho mínimo do email deve ser maior que 2 caracteres.',
+    message: 'Tamanho mínimo do email. Deve ser maior que 2 caracteres.',
   })
   @IsEmail({}, { message: 'Email inválido.' })
   @Transform(LowerCaseTransform)
@@ -41,12 +41,12 @@ export class CreateUserDto {
 
   @ApiPropertyOptional({ example: Faker.phone.phoneNumber() })
   @MaxLength(16, {
-    message: 'Tamanho máximo do telefone deve ser menor que 16 caracteres.',
+    message: 'Tamanho máximo do telefone. Deve ser menor que 16 caracteres.',
   })
   @IsOptional()
   @IsString({ message: 'Telefone é inválido.' })
   @MinLength(8, {
-    message: 'Tamanho mínimo do telefone deve ser maior que 8 caracteres.',
+    message: 'Tamanho mínimo do telefone. Deve ser maior que 8 caracteres.',
   })
   @Transform(KeepAllNumbersTransform)
   phoneNumber?: string;
@@ -63,7 +63,7 @@ export class CreateUserDto {
 
   @ApiProperty({ example: Faker.internet.password() })
   @IsString({ message: 'A senha é obrigatória.' })
-  @MinLength(5, { message: 'A senha deve possuir no mínimo 5 caracteres.' })
+  @MinLength(5, { message: 'A senha. Deve possuir no mínimo 5 caracteres.' })
   @Transform(HashPasswordTransform)
   password: string;
 }

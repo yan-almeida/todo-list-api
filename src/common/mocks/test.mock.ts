@@ -24,7 +24,17 @@ export class TestMock {
       }),
     }));
   }
-
+  static mockedRepo() {
+    return {
+      save: jest.fn(),
+      create: jest.fn(),
+      find: jest.fn(),
+      findOne: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+      createQueryBuilder: this.createQueryBuilderSetup(),
+    };
+  }
   static resultPaginate<T>(items: T[]): PaginatedDto<T> {
     return {
       items,

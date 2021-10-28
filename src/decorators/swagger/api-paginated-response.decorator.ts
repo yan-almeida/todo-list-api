@@ -5,7 +5,7 @@ import {
   getSchemaPath,
 } from '@nestjs/swagger';
 import { OkResponse } from './ok-response.decorator';
-export const PaginatedResponse = <TModel extends Type<any>>(
+export const PaginatedOkResponse = <TModel extends Type<any>>(
   model: TModel,
   options?: ApiResponseOptions,
 ) => {

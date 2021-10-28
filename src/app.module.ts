@@ -7,8 +7,7 @@ import { AppService } from './app.service';
 import ormConfig from './configs/orm.config';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { AuthModule } from './modules/auth/auth.module';
-import { GameSaleModule } from './modules/game-sale/game-sale.module';
-import { PlatformModule } from './modules/platform/platform.module';
+import { TodoModule } from './modules/todo/to-do.module';
 import { UserModule } from './modules/user/user.module';
 
 @Module({
@@ -22,8 +21,7 @@ import { UserModule } from './modules/user/user.module';
     TypeOrmModule.forRoot(ormConfig),
     AuthModule,
     UserModule,
-    PlatformModule,
-    GameSaleModule,
+    TodoModule,
   ],
   providers: [AppService],
 })

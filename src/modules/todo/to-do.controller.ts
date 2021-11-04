@@ -8,18 +8,22 @@ import {
   Post,
   Query,
   Req,
+  UseGuards,
 } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { Request } from 'express';
 import { PaginatedDto } from '../../common/dtos/paginated.dto';
 import { PaginationParser } from '../../common/parsers/pagination.parser';
-import { JwtGuardSetup } from '../../decorators/jwt-guard.decorator';
 import { ApiController } from '../../decorators/swagger/api-controller.decorator';
 import { PaginatedOkResponse } from '../../decorators/swagger/api-paginated-response.decorator';
 import { BadRequestResponse } from '../../decorators/swagger/bad-request-response.decorator';
 import { CreatedResponse } from '../../decorators/swagger/created-response.decorator';
+import { ForbiddenResponse } from '../../decorators/swagger/forbidden-response.decorator';
 import { NoContentResponse } from '../../decorators/swagger/no-content-response.decorator';
 import { NotFoundResponse } from '../../decorators/swagger/not-found-response.decorator';
 import { OkResponse } from '../../decorators/swagger/ok-response.decorator';
+import { UnauthorizedResponse } from '../../decorators/swagger/unauthorized-response.decorator';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { CreateTodoDto } from './dto/create-to-do.dto';
 import { FilterToDoDto } from './dto/filter-to-do.dto';
 import { ToDoDto } from './dto/to-do.dto';
@@ -35,7 +39,10 @@ export class TodoController {
   @CreatedResponse({ description: 'Criação de afazer.', type: ToDoDto })
   @BadRequestResponse()
   @NotFoundResponse()
-  @JwtGuardSetup()
+  @ApiBearerAuth()
+  @UnauthorizedResponse()
+  @ForbiddenResponse()
+  @UseGuards(JwtAuthGuard)
   async create(
     @Body() dto: CreateTodoDto,
     @Req() req: Request,
@@ -48,7 +55,10 @@ export class TodoController {
   @Get()
   @PaginatedOkResponse(ToDoDto, { description: 'Paginação de Afazeres' })
   @BadRequestResponse()
-  @JwtGuardSetup()
+  @ApiBearerAuth()
+  @UnauthorizedResponse()
+  @ForbiddenResponse()
+  @UseGuards(JwtAuthGuard)
   async paginate(
     @Query() filter: FilterToDoDto,
     @Req() req: Request,
@@ -61,6 +71,10 @@ export class TodoController {
   @Get(':id')
   @OkResponse({ description: 'Detalhes de Afazer', type: ToDoDto })
   @NotFoundResponse()
+  @ApiBearerAuth()
+  @UnauthorizedResponse()
+  @ForbiddenResponse()
+  @UseGuards(JwtAuthGuard)
   async findOne(
     @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<ToDoDto> {
@@ -70,9 +84,13 @@ export class TodoController {
   }
 
   @Patch(':id')
-  @OkResponse({ description: 'Detalhes de Afazer', type: ToDoDto })
+  @OkResponse({ description: 'Atualização de Afazer', type: ToDoDto })
   @NotFoundResponse()
   @BadRequestResponse()
+  @ApiBearerAuth()
+  @UnauthorizedResponse()
+  @ForbiddenResponse()
+  @UseGuards(JwtAuthGuard)
   async update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() dto: UpdateTodoDto,
@@ -85,6 +103,10 @@ export class TodoController {
 
   @Delete(':id')
   @NoContentResponse({ description: 'Deleção de Afazer' })
+  @ApiBearerAuth()
+  @UnauthorizedResponse()
+  @UseGuards(JwtAuthGuard)
+  @ForbiddenResponse()
   remove(@Param('id', new ParseUUIDPipe()) id: string, @Req() req: Request) {
     return this._toDoService.remove(id, req.user);
   }

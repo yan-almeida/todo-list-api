@@ -7,10 +7,13 @@ import {
   Patch,
   Post,
   Query,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { Request } from 'express';
 import { PaginatedDto } from '../../common/dtos/paginated.dto';
 import { PaginationParser } from '../../common/parsers/pagination.parser';
-import { JwtGuardSetup } from '../../decorators/jwt-guard.decorator';
 import { ApiController } from '../../decorators/swagger/api-controller.decorator';
 import { PaginatedOkResponse } from '../../decorators/swagger/api-paginated-response.decorator';
 import { BadRequestResponse } from '../../decorators/swagger/bad-request-response.decorator';
@@ -18,6 +21,8 @@ import { CreatedResponse } from '../../decorators/swagger/created-response.decor
 import { NoContentResponse } from '../../decorators/swagger/no-content-response.decorator';
 import { NotFoundResponse } from '../../decorators/swagger/not-found-response.decorator';
 import { OkResponse } from '../../decorators/swagger/ok-response.decorator';
+import { UnauthorizedResponse } from '../../decorators/swagger/unauthorized-response.decorator';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { CreateUserDto } from './dto/create-user.dto';
 import { FilterUserDto as FilterUserDto } from './dto/filter-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -65,7 +70,7 @@ export class UserController {
     return UserParser.toUserDto(result);
   }
 
-  @Patch(':id')
+  @Patch()
   @OkResponse({
     type: UserDto,
     description: 'Atualização de dados do Usuário',
@@ -73,20 +78,22 @@ export class UserController {
   @NoContentResponse()
   @NotFoundResponse()
   @BadRequestResponse()
-  @JwtGuardSetup()
-  async update(
-    @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() dto: UpdateUserDto,
-  ) {
-    const result = await this._userService.update(id, dto);
+  @ApiBearerAuth()
+  @UnauthorizedResponse()
+  @UseGuards(JwtAuthGuard)
+  async update(@Body() dto: UpdateUserDto, @Req() req: Request) {
+    const result = await this._userService.update(req.user.userId, dto);
 
     return UserParser.toUserDto(result);
   }
 
-  @Delete(':id')
+  @Delete()
   @NoContentResponse({ description: 'Deleção de Usuário' })
   @NotFoundResponse()
-  remove(@Param('id', new ParseUUIDPipe()) id: string) {
-    return this._userService.remove(id);
+  @ApiBearerAuth()
+  @UnauthorizedResponse()
+  @UseGuards(JwtAuthGuard)
+  remove(@Req() req: Request) {
+    return this._userService.remove(req.user.userId);
   }
 }

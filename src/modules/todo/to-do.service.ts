@@ -73,7 +73,7 @@ export class ToDoService {
   async #validateToDoUser(id: string, loggedUser: Express.User) {
     const toDo = await this.findOne(id);
 
-    if (toDo.user.id === loggedUser.userId) {
+    if (toDo.user.id !== loggedUser.userId) {
       throw new ForbiddenException();
     }
   }

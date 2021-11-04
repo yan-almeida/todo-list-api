@@ -12,7 +12,7 @@ export default {
   autoLoadEntities: false,
   synchronize: false,
   dropSchema: false,
-  migrationsRun: false,
+  migrationsRun: true,
   logging: true,
   logger: 'file',
   entityPrefix: 'tb_',
